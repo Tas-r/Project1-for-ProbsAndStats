@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/MonteCarloBirthday/MonteCarloBirthday.iml" filepath="$PROJECT_DIR$/MonteCarloBirthday/MonteCarloBirthday.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MonteCarloDoor/MonteCarloDoor.iml" filepath="$PROJECT_DIR$/MonteCarloDoor/MonteCarloDoor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MonteCarloPokemon/MonteCarloPokemon.iml" filepath="$PROJECT_DIR$/MonteCarloPokemon/MonteCarloPokemon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PokemonBattle/PokemonBattle.iml" filepath="$PROJECT_DIR$/PokemonBattle/PokemonBattle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PokemonCardGame/PokemonCardGame.iml" filepath="$PROJECT_DIR$/PokemonCardGame/PokemonCardGame.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Project 1 for ProbsAnsStats.iml" filepath="$PROJECT_DIR$/Project 1 for ProbsAnsStats.iml" />
+      <module fileurl="file://$PROJECT_DIR$/StatsLibrary/StatsLibrary.iml" filepath="$PROJECT_DIR$/StatsLibrary/StatsLibrary.iml" />
+    </modules>
+  </component>
+</project>
