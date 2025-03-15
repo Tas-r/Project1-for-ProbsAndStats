@@ -16,6 +16,8 @@ class PokemonGame {
     private boolean gameWon = false;
     private Scanner scanner = new Scanner(System.in);
     private boolean trainerPlayedThisTurn = false;
+    private boolean ProfessorElmsAdviceActivePlayer1 = false;
+    private boolean ProfessorElmsAdviceActivePlayer2 = false;
 
     public PokemonGame() {
         deckPlayer1 = new ArrayList<>();
@@ -44,7 +46,17 @@ class PokemonGame {
             deckPlayer1.add(new Shinx());
             deckPlayer2.add(new Shinx());
         }
+        for (int i = 0; i < 3; i++) {
+            deckPlayer1.add(new Hero());
+            deckPlayer2.add(new Hero());
+            deckPlayer1.add(new ProfessorElmsAdvice());
+            deckPlayer2.add(new ProfessorElmsAdvice());
+            deckPlayer1.add(new Bill());
+            deckPlayer1.add(new ProfessorsResearch());
+            deckPlayer2.add(new Bill());
+            deckPlayer2.add(new ProfessorsResearch());
 
+        }
         for (int i = 0; i < 6; i++) {
             deckPlayer1.add(new Electric());
             deckPlayer1.add(new Water());
@@ -54,16 +66,10 @@ class PokemonGame {
             deckPlayer2.add(new Fire());
 
         }
-        for (int i = 0; i < 12; i++) {
-            deckPlayer2.add(new BasicEnergy());
-            deckPlayer1.add(new BasicEnergy());
-        }
 
-        for (int i = 0; i < 5; i++) {
-            deckPlayer1.add(new Bill());
-            deckPlayer1.add(new ProfessorsResearch());
-            deckPlayer2.add(new Bill());
-            deckPlayer2.add(new ProfessorsResearch());
+        for (int i = 0; i < 10; i++) {
+            deckPlayer1.add(new BasicEnergy());
+            deckPlayer2.add(new BasicEnergy());
         }
 
         Collections.shuffle(deckPlayer1);
@@ -373,16 +379,29 @@ class PokemonGame {
                         }
                         break;
 
-                    case 4:
+                        case 4:
                         if (active == null) {
                             System.out.println("No active Pokémon to attack with!");
                         } else if (active.getEnergyAttached() >= 1) {
                             int damage = 10;
+                            // Check for ProfessorElmsAdvice first
+                            boolean ProfessorElmsAdviceUsed = false;
+                            if (player1Turn && ProfessorElmsAdviceActivePlayer1) {
+                                damage *= 2;
+                                ProfessorElmsAdviceActivePlayer1 = false;
+                                ProfessorElmsAdviceUsed = true;
+                            } else if (!player1Turn && ProfessorElmsAdviceActivePlayer2) {
+                                damage *= 2;
+                                ProfessorElmsAdviceActivePlayer2 = false;
+                                ProfessorElmsAdviceUsed = true;
+                            }
+                            // Then check for weakness
                             if (opponentActive.getWeakness().equals(active.getPokeType())) {
                                 damage *= 2;
                             }
                             opponentActive.setHp(opponentActive.getHp() - damage);
-                            System.out.println(active.getName() + " attacked " + opponentActive.getName() + " for " + damage + " damage!");
+                            System.out.println(active.getName() + " attacked " + opponentActive.getName() + " for " + damage + " damage!" + 
+                                             (ProfessorElmsAdviceUsed ? " (ProfessorElmsAdvice applied)" : ""));
                             if (opponentActive.getHp() <= 0) {
                                 handleKnockout(hand, prizes, opponentActive);
                                 if (player1Turn) {
@@ -532,6 +551,46 @@ class PokemonGame {
             drawCard(deck, hand, 7);
             System.out.println("Professor's Research effect: Returned hand to deck and drew 7 cards!");
             System.out.println("Updated Hand: " + hand);
+        } else if (trainer.getName().equals("Hero")) {
+            ArrayList<Pokemon> availablePokemon = new ArrayList<>();
+            if (player1Turn) {
+                if (activePlayer1 != null) availablePokemon.add(activePlayer1);
+                availablePokemon.addAll(benchPlayer1);
+            } else {
+                if (activePlayer2 != null) availablePokemon.add(activePlayer2);
+                availablePokemon.addAll(benchPlayer2);
+            }
+    
+            if (availablePokemon.isEmpty()) {
+                System.out.println("No Pokémon available to apply Hero effect!");
+                return;
+            }
+    
+            System.out.println("Select a Pokémon to increase HP by 100:");
+            for (int i = 0; i < availablePokemon.size(); i++) {
+                System.out.println(i + ": " + availablePokemon.get(i).getName() + 
+                                 " (Current HP: " + availablePokemon.get(i).getHp() + ")");
+            }
+    
+            int selection = scanner.nextInt();
+            scanner.nextLine();
+            
+            if (selection >= 0 && selection < availablePokemon.size()) {
+                Pokemon selected = availablePokemon.get(selection);
+                selected.setHp(selected.getHp() + 100);
+                System.out.println("Hero effect: Increased " + selected.getName() + "'s HP by 100!");
+                System.out.println("New HP: " + selected.getHp());
+            } else {
+                System.out.println("Invalid selection! Hero effect not applied.");
+            }
+        } else if (trainer.getName().equals("ProfessorElmsAdvice")) {
+            if (player1Turn) {
+                ProfessorElmsAdviceActivePlayer1 = true;
+                System.out.println("ProfessorElmsAdvice effect: Player 1's next attack will deal double damage!");
+            } else {
+                ProfessorElmsAdviceActivePlayer2 = true;
+                System.out.println("ProfessorElmsAdvice effect: Player 2's next attack will deal double damage!");
+            }
         }
     }
 
@@ -550,5 +609,4 @@ class PokemonGame {
         }
         scanner.close();
     }
-
 }
