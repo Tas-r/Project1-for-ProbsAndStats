@@ -1,6 +1,6 @@
 public class Pikachu extends Pokemon{
 
-
+// Pikachu is a child class of Pokemon
 
 public Pikachu (){
     setHp (35);
@@ -9,5 +9,5 @@ public Pikachu (){
     setSpeed (90);
 }}
 
-//Wec could make another constructor with all the parameter
+//We could make another constructor with all the parameter
 // we would want a set of getters and setters.

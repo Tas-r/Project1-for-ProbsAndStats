@@ -5,4 +5,4 @@ class Energy extends Card{
         this.cardName = type + " Energy";
         this.type = type;
     }
-}
+} //energy class

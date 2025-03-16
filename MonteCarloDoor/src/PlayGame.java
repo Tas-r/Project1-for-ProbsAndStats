@@ -1,21 +1,15 @@
 import java.util.Random;
 
-/**
- * Simulates the Monty Hall problem to demonstrate the statistical advantage
- * of switching doors
- */
+  //Simulates the Monty Hall problem to demonstrate the statistical advantage of switching doors
+
 class PlayGame {
 
     private static Random random = new Random(); // Random number generator for making choices
 
-    /**
-     * Simulates one round of the Monty Hall game
-     *
-     * @param switchDoor Whether the player switches their choice after a door is revealed
-     * @return true if the player wins the prize, false otherwise
-     */
+     //switchDoor Whether the player switches their choice after a door is revealed
+
     private static boolean playGame(boolean switchDoor) {
-        // Create three doors, all initially without prizes
+        // Created three doors, all initially without prizes
         Door[] doors = { new Door(false), new Door(false), new Door(false) };
 
         // Randomly place the prize behind one of the doors
@@ -45,13 +39,6 @@ class PlayGame {
         return doors[playerChoice].hasPrize;
     }
 
-    /**
-     * Runs multiple simulations of the Monty Hall game to calculate win percentage
-     *
-     * @param switchDoor Whether the player switches their door choice
-     * @param trials Number of games to simulate
-     * @return The percentage of games won using the specified strategy
-     */
     public static double simulate(boolean switchDoor, int trials) {
         int wins = 0;
 

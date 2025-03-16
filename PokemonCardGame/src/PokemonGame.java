@@ -3,7 +3,9 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 
+
 class PokemonGame {
+    //deck, hand, prize, discard, bench arraylists for both players
     private ArrayList<Card> deckPlayer1, deckPlayer2;
     private ArrayList<Card> handPlayer1, handPlayer2;
     private ArrayList<Card> prizesPlayer1, prizesPlayer2;
@@ -46,7 +48,7 @@ class PokemonGame {
             deckPlayer1.add(new Shinx());
             deckPlayer2.add(new Shinx());
         }
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             deckPlayer1.add(new Hero());
             deckPlayer2.add(new Hero());
             deckPlayer1.add(new ProfessorElmsAdvice());
@@ -57,7 +59,7 @@ class PokemonGame {
             deckPlayer2.add(new ProfessorsResearch());
 
         }
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 5 ; i++) {
             deckPlayer1.add(new Electric());
             deckPlayer1.add(new Water());
             deckPlayer1.add(new Fire());
@@ -67,7 +69,7 @@ class PokemonGame {
 
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 9; i++) {
             deckPlayer1.add(new BasicEnergy());
             deckPlayer2.add(new BasicEnergy());
         }
@@ -379,40 +381,61 @@ class PokemonGame {
                         }
                         break;
 
-                        case 4:
+                    case 4:
                         if (active == null) {
                             System.out.println("No active Pokémon to attack with!");
                         } else if (active.getEnergyAttached() >= 1) {
-                            int damage = 10;
-                            // Check for ProfessorElmsAdvice first
-                            boolean ProfessorElmsAdviceUsed = false;
+                            int baseDamage = 10; // Base damage for the attack
+                            int finalDamage = baseDamage;
+
+                            // Check for Professor Elm's Advice effect
+                            boolean professorElmEffectApplied = false;
                             if (player1Turn && ProfessorElmsAdviceActivePlayer1) {
-                                damage *= 2;
-                                ProfessorElmsAdviceActivePlayer1 = false;
-                                ProfessorElmsAdviceUsed = true;
+                                finalDamage = baseDamage * 2;
+                                ProfessorElmsAdviceActivePlayer1 = false; // Reset after use
+                                professorElmEffectApplied = true;
                             } else if (!player1Turn && ProfessorElmsAdviceActivePlayer2) {
-                                damage *= 2;
-                                ProfessorElmsAdviceActivePlayer2 = false;
-                                ProfessorElmsAdviceUsed = true;
+                                finalDamage = baseDamage * 2;
+                                ProfessorElmsAdviceActivePlayer2 = false; // Reset after use
+                                professorElmEffectApplied = true;
                             }
-                            // Then check for weakness
+
+                            // Check for weakness after Professor Elm's Advice (multiplicative effect)
                             if (opponentActive.getWeakness().equals(active.getPokeType())) {
-                                damage *= 2;
+                                finalDamage *= 2; // Double damage again if weak
                             }
-                            opponentActive.setHp(opponentActive.getHp() - damage);
-                            System.out.println(active.getName() + " attacked " + opponentActive.getName() + " for " + damage + " damage!" + 
-                                             (ProfessorElmsAdviceUsed ? " (ProfessorElmsAdvice applied)" : ""));
+
+                            opponentActive.setHp(opponentActive.getHp() - finalDamage);
+                            System.out.println(active.getName() + " attacked " + opponentActive.getName() + " for " + finalDamage + " damage!" +
+                                    (professorElmEffectApplied ? " (Professor Elm's Advice applied)" : "") +
+                                    (opponentActive.getWeakness().equals(active.getPokeType()) ? " (Weakness applied)" : ""));
+
+                            // Discard energy after attack
+                            int energyUsed = active.getEnergyAttached();
+                            active.setEnergyAttached(0); // Reset energy to 0
+                            if (player1Turn) {
+                                for (int i = 0; i < energyUsed; i++) {
+                                    discardPlayer1.add(new Energy("Generic")); // Add discarded energy to discard pile
+                                }
+                                System.out.println(active.getName() + " used its energy to attack. " + energyUsed + " energy discarded.");
+                            } else {
+                                for (int i = 0; i < energyUsed; i++) {
+                                    discardPlayer2.add(new Energy("Generic")); // Add discarded energy to discard pile
+                                }
+                                System.out.println(active.getName() + " used its energy to attack. " + energyUsed + " energy discarded.");
+                            }
+
                             if (opponentActive.getHp() <= 0) {
                                 handleKnockout(hand, prizes, opponentActive);
                                 if (player1Turn) {
-                                    opponentActive = activePlayer2;
+                                    opponentActive = activePlayer2; // Player 2's new active Pokémon
                                 } else {
-                                    active = activePlayer1;
+                                    opponentActive = activePlayer1; // Player 1's new active Pokémon
                                 }
                             }
                             attacked = true;
                         } else {
-                            System.out.println("Not enough energy to attack!");
+                            System.out.println("Not enough energy to attack! Attach new energy to attack again.");
                         }
                         break;
 
@@ -551,6 +574,8 @@ class PokemonGame {
             drawCard(deck, hand, 7);
             System.out.println("Professor's Research effect: Returned hand to deck and drew 7 cards!");
             System.out.println("Updated Hand: " + hand);
+
+
         } else if (trainer.getName().equals("Hero")) {
             ArrayList<Pokemon> availablePokemon = new ArrayList<>();
             if (player1Turn) {
@@ -583,7 +608,7 @@ class PokemonGame {
             } else {
                 System.out.println("Invalid selection! Hero effect not applied.");
             }
-        } else if (trainer.getName().equals("ProfessorElmsAdvice")) {
+        } else if (trainer.getName().equals("Professor Elm's Advice")) {
             if (player1Turn) {
                 ProfessorElmsAdviceActivePlayer1 = true;
                 System.out.println("ProfessorElmsAdvice effect: Player 1's next attack will deal double damage!");

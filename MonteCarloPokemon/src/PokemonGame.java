@@ -1,9 +1,6 @@
 import java.util.*;
 
-/**
- * Represents a Pokemon Trading Card Game simulation
- * Used for calculating probabilities of certain game scenarios
- */
+
 class PokemonGame {
     // Game zones where cards can be placed
     List<Card> deck = new ArrayList<>();    // Main deck of cards
@@ -14,14 +11,10 @@ class PokemonGame {
 
     Random random = new Random(); // For shuffling deck
 
-    /**
-     * Creates and shuffles a deck with specified card counts
-     *
-     * @param pokemonCount Number of Pokemon cards to include
-     * @param energyCount Number of Energy cards to include
-     * @param trainerCount Number of Trainer cards to include
-     */
-    void setDeck(int pokemonCount, int energyCount, int trainerCount) {
+
+     // Creates and shuffles a deck with specified card counts
+
+    void InitializeDeck(int pokemonCount, int energyCount, int trainerCount) {
         deck.clear(); // Start with an empty deck
 
         // Add Pokemon cards
@@ -42,11 +35,9 @@ class PokemonGame {
         Collections.shuffle(deck); // Randomize card order
     }
 
-    /**
-     * Draw multiple cards from deck to hand
-     *
-     * @param count Number of cards to draw
-     */
+
+      //Drawing multiple cards from deck to hand
+
     void drawCard(int count) {
         for (int i = 0; i < count; i++) {
             if (!deck.isEmpty()) {
@@ -55,12 +46,7 @@ class PokemonGame {
         }
     }
 
-    /**
-     * Check if player has at least one Pokemon card in hand
-     * In the Pokemon TCG, a hand with no Pokemon is a "mulligan"
-     *
-     * @return true if hand contains at least one Pokemon card
-     */
+   // if there is a pokemon in the hand, return true
     boolean hasPokemonInHand() {
         for (Card card : hand) {
             if (card instanceof Pokemon) {
@@ -70,12 +56,7 @@ class PokemonGame {
         return false;
     }
 
-    /**
-     * Set aside prize cards at the beginning of the game
-     * In Pokemon TCG, typically 6 cards are set aside as prizes
-     *
-     * @param count Number of prize cards to set aside
-     */
+    //set prize cards aside at the start of the game
     void setPrize(int count) {
         prize.clear(); // Start with empty prize pile
         for (int i = 0; i < count; i++) {
@@ -83,13 +64,7 @@ class PokemonGame {
         }
     }
 
-    /**
-     * Checks if all Rare Candy cards are in the prize pile
-     * This is known as "bricking" - when key cards are inaccessible
-     *
-     * @param rareCandyCount Total number of Rare Candy cards in the deck
-     * @return true if all Rare Candy cards are in the prize pile
-     */
+    //check if all rare candy cards are in the prize pile
     boolean checkBrick(int rareCandyCount) {
         int rareCandyInPrize = 0;
         for (Card card : prize) {
@@ -100,12 +75,7 @@ class PokemonGame {
         return rareCandyInPrize == rareCandyCount; // if all are in the prize pile, return true (brick)
     }
 
-    /**
-     * Simulates many games to determine probability of "bricking"
-     * where all Rare Candy cards end up in the prize pile
-     *
-     * @param trials Number of games to simulate for statistical significance
-     */
+
     static void simulateBrickOdds(int trials) {
         System.out.println("Rare Candy Count, Brick %"); // print header for results
 
@@ -118,7 +88,7 @@ class PokemonGame {
 
                 // Create a deck with 10 Pokémon, some Rare Candy, and the rest energy
                 // Total deck size is 60 cards (standard Pokemon TCG deck size)
-                game.setDeck(10, 50 - rareCandyCount, rareCandyCount);
+                game.InitializeDeck(10, 50 - rareCandyCount, rareCandyCount);
 
                 // In Pokemon TCG, if you have no Pokemon in your starting hand,
                 // you must redraw (mulligan). This loop simulates that rule
@@ -141,12 +111,7 @@ class PokemonGame {
         }
     }
 
-    /**
-     * Calculates probability of getting a mulligan (no Pokemon in hand)
-     * for different Pokemon counts in the deck
-     *
-     * @param trials Number of hands to draw for each Pokemon count
-     */
+    // Calculates probability of getting a mulligan or no Pokemon in hand
     static void calcMulliganPercent(int trials) {
         System.out.println("Pokemon Count, Mulligan %");
 
@@ -156,8 +121,8 @@ class PokemonGame {
 
             for (int i = 0; i < trials; i++) {
                 PokemonGame game = new PokemonGame();
-                // Create deck with varying Pokemon count, rest as energy, no trainers
-                game.setDeck(pokemonCount, 60 - pokemonCount, 0);
+                // Deck with varying Pokemon count, rest as energy, no trainers
+                game.InitializeDeck(pokemonCount, 60 - pokemonCount, 0);
                 game.drawCard(7); // Draw initial 7-card hand
 
                 // Count as mulligan if no Pokemon in hand

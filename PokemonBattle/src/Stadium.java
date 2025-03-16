@@ -1,16 +1,11 @@
-/**
- * Represents a Pokemon battle stadium where two Pokemon can fight
- * The Stadium manages the battle mechanics including turn order and victory conditions
- */
+//Represents a Pokemon battle stadium where two Pokemon can fight
+
 public class Stadium {
 
-    /**
-     * Conducts a battle between two Pokemon until one is knocked out
-     * Turn order is determined by Pokemon speed stat (faster Pokemon attacks first)
-     *
-     * @param p1 First Pokemon (controlled by Player 1)
-     * @param p2 Second Pokemon (controlled by Player 2)
-     */
+
+     // Conducts a battle between two Pokemon until one is knocked out
+     // Turn order is determined by Pokemon speed stat (faster Pokemon attacks first)
+
     public void battle(Pokemon p1, Pokemon p2) {
         // Battle continues until one Pokemon's HP reaches 0 or below
         while (p1.getHp() > 0 && p2.getHp() > 0) {
@@ -46,16 +41,16 @@ public class Stadium {
     }
 
     /*
-     * Battle sequence explanation:
-     * 1. First, we check which Pokemon has higher Speed stat
-     * 2. The faster Pokemon attacks first
-     * 3. If the defending Pokemon survives (HP > 0), it counter-attacks
-     * 4. This process repeats until one Pokemon's HP reaches 0
-     * 5. The Pokemon with remaining HP wins the battle
-     *
-     * Notes:
-     * - The attack damage calculation is handled by the Pokemon class's attacks() method
-     * - This likely includes calculating the difference between attack and defense stats
-     * - Type advantages and other battle mechanics would also be implemented there
+       Battle sequence explanation:
+       First, we check which Pokemon has higher Speed stat
+       The faster Pokemon attacks first
+       If the defending Pokemon survives (HP > 0), it counter-attacks
+       This process repeats until one Pokemon's HP reaches 0
+       The Pokemon with remaining HP wins the battle
+
+      Notes in class:
+      - The attack damage calculation is handled by the Pokemon class's attacks() method
+      - This likely includes calculating the difference between attack and defense stats
+      - Type advantages and other battle mechanics would also be implemented there
      */
 }
