@@ -3,24 +3,25 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 
-
 class PokemonGame {
-    //deck, hand, prize, discard, bench arraylists for both players
-    private ArrayList<Card> deckPlayer1, deckPlayer2;
-    private ArrayList<Card> handPlayer1, handPlayer2;
-    private ArrayList<Card> prizesPlayer1, prizesPlayer2;
-    private ArrayList<Card> discardPlayer1, discardPlayer2;
-    private ArrayList<Pokemon> benchPlayer1, benchPlayer2;
-    private Pokemon activePlayer1, activePlayer2;
-    private int prizeCountPlayer1 = 6, prizeCountPlayer2 = 6;
-    private Random random = new Random();
-    private boolean player1Turn = true;
-    private boolean gameWon = false;
-    private Scanner scanner = new Scanner(System.in);
-    private boolean trainerPlayedThisTurn = false;
-    private boolean ProfessorElmsAdviceActivePlayer1 = false;
-    private boolean ProfessorElmsAdviceActivePlayer2 = false;
+    // Instance variables representing game state for both players
+    // Decks, hands, prizes, discards, and benches are stored as ArrayLists
+    private ArrayList<Card> deckPlayer1, deckPlayer2; // Main decks for drawing cards
+    private ArrayList<Card> handPlayer1, handPlayer2; // Cards currently held by players
+    private ArrayList<Card> prizesPlayer1, prizesPlayer2; // Prize cards to be won
+    private ArrayList<Card> discardPlayer1, discardPlayer2; // Discarded cards
+    private ArrayList<Pokemon> benchPlayer1, benchPlayer2; // Bench Pokémon (up to 5)
+    private Pokemon activePlayer1, activePlayer2; // Active Pokémon in play
+    private int prizeCountPlayer1 = 6, prizeCountPlayer2 = 6; // Number of prizes remaining
+    private Random random = new Random(); // Random number generator for coin flips and shuffling
+    private boolean player1Turn = true; // Tracks whose turn it is (true = Player 1, false = Player 2)
+    private boolean gameWon = false; // Indicates if the game has ended
+    private Scanner scanner = new Scanner(System.in); // Input scanner for player choices
+    private boolean trainerPlayedThisTurn = false; // Limits trainer card usage to once per turn
+    private boolean ProfessorElmsAdviceActivePlayer1 = false; // Tracks Professor Elm's Advice effect for Player 1
+    private boolean ProfessorElmsAdviceActivePlayer2 = false; // Tracks Professor Elm's Advice effect for Player 2
 
+    // Constructor: Initializes all ArrayLists and sets up the decks
     public PokemonGame() {
         deckPlayer1 = new ArrayList<>();
         deckPlayer2 = new ArrayList<>();
@@ -32,10 +33,12 @@ class PokemonGame {
         discardPlayer2 = new ArrayList<>();
         benchPlayer1 = new ArrayList<>();
         benchPlayer2 = new ArrayList<>();
-        initializeDecks();
+        initializeDecks(); // Populates and shuffles the decks
     }
 
+    // Initializes decks with Pokémon, Trainers, and Energy cards, then shuffles them
     private void initializeDecks() {
+        // Add Pokémon cards (4 of each type per player)
         for (int i = 0; i < 4; i++) {
             deckPlayer1.add(new Pikachu());
             deckPlayer1.add(new Squirtle());
@@ -48,6 +51,7 @@ class PokemonGame {
             deckPlayer1.add(new Shinx());
             deckPlayer2.add(new Shinx());
         }
+        // Add Trainer cards (4 of each type per player)
         for (int i = 0; i < 4; i++) {
             deckPlayer1.add(new Hero());
             deckPlayer2.add(new Hero());
@@ -57,85 +61,94 @@ class PokemonGame {
             deckPlayer1.add(new ProfessorsResearch());
             deckPlayer2.add(new Bill());
             deckPlayer2.add(new ProfessorsResearch());
-
         }
-        for (int i = 0; i < 5 ; i++) {
+        // Add typed Energy cards (5 of each type per player)
+        for (int i = 0; i < 5; i++) {
             deckPlayer1.add(new Electric());
             deckPlayer1.add(new Water());
             deckPlayer1.add(new Fire());
             deckPlayer2.add(new Electric());
             deckPlayer2.add(new Water());
             deckPlayer2.add(new Fire());
-
         }
-
+        // Add Basic Energy cards (9 per player)
         for (int i = 0; i < 9; i++) {
             deckPlayer1.add(new BasicEnergy());
             deckPlayer2.add(new BasicEnergy());
         }
-
+        // Shuffle both decks to randomize card order
         Collections.shuffle(deckPlayer1);
         Collections.shuffle(deckPlayer2);
     }
 
+    // Returns the current player's identifier
     private String getCurrentPlayer() {
         return player1Turn ? "Player 1" : "Player 2";
     }
 
+    // Returns the opponent player's identifier
     private String getOpponentPlayer() {
         return player1Turn ? "Player 2" : "Player 1";
     }
 
+    // Converts a coin flip result (0 or 1) to "Heads" or "Tails"
     private String getCoinFlipResult(int flip) {
         return flip == 0 ? "Heads" : "Tails";
     }
 
+    // Formats a Pokémon's status (name, HP, and energy) for display
     private String getPokemonStatus(Pokemon pokemon) {
         if (pokemon == null) return "None";
         return pokemon.getName() + " (HP: " + pokemon.getHp() + ", Energy: " + pokemon.getEnergyAttached() + ")";
     }
 
+    // Draws a specified number of cards from deck to hand, if available
     private void drawCard(ArrayList<Card> deck, ArrayList<Card> hand, int count) {
         if (deck.isEmpty()) {
             System.out.println("Deck is empty, cannot draw cards.");
             return;
         }
         for (int i = 0; i < count && !deck.isEmpty(); i++) {
-            hand.add(deck.remove(0));
+            hand.add(deck.remove(0)); // Removes top card from deck and adds to hand
         }
     }
 
+    // Checks if there’s at least one Pokémon card in the hand
     private boolean determineIfPokemonInHand(ArrayList<Card> hand) {
         return hand.stream().anyMatch(card -> card instanceof Pokemon);
     }
 
+    // Fills a player’s hand with 7 cards, reshuffling if no Pokémon are drawn
     private void fillHand(ArrayList<Card> deck, ArrayList<Card> hand, ArrayList<Card> returnDeck,
                           ArrayList<Card> opponentDeck, ArrayList<Card> opponentHand) {
         drawCard(deck, hand, 7);
-
+        // Keep reshuffling until a Pokémon is drawn, unless deck runs out
         while (!determineIfPokemonInHand(hand) && !deck.isEmpty()) {
             System.out.println("No Pokémon in hand. Reshuffling...");
-            returnDeck.addAll(hand);
-            Collections.shuffle(returnDeck);
-            hand.clear();
-            drawCard(deck, hand, 7);
+            returnDeck.addAll(hand); // Return hand to deck
+            Collections.shuffle(returnDeck); // Shuffle deck
+            hand.clear(); // Clear hand
+            drawCard(deck, hand, 7); // Draw new hand
             if (!determineIfPokemonInHand(hand)) {
-                drawCard(opponentDeck, opponentHand, 1);
+                drawCard(opponentDeck, opponentHand, 1); // Opponent draws penalty card
                 System.out.println("Opponent draws 1 card because no Pokémon in hand!");
             }
         }
     }
 
+    // Sets up 6 prize cards from the deck
     private void fillPrize(ArrayList<Card> deck, ArrayList<Card> prizes) {
         drawCard(deck, prizes, 6);
     }
 
+    // Sets up the game: determines first player, fills hands and prizes, selects active and bench Pokémon
     private void setupGame() {
-        int flip = random.nextInt(2);
+        int flip = random.nextInt(2); // Coin flip to decide who goes first
         System.out.println("Coin flip result: " + getCoinFlipResult(flip));
-        player1Turn = (flip == 0);
+        player1Turn = (flip == 0); // Heads = Player 1 goes first
         System.out.println(getCurrentPlayer() + " goes first!");
 
+        // Fill initial hands and prize pools
         fillHand(deckPlayer1, handPlayer1, deckPlayer1, deckPlayer2, handPlayer2);
         fillHand(deckPlayer2, handPlayer2, deckPlayer2, deckPlayer1, handPlayer1);
         fillPrize(deckPlayer1, prizesPlayer1);
@@ -161,7 +174,7 @@ class PokemonGame {
         activePlayer1 = (Pokemon) handPlayer1.remove(activeIndex1);
         System.out.println("Player 1 set " + activePlayer1.getName() + " as active.");
 
-        // Player 1 selects bench Pokémon (optional)
+        // Player 1 selects bench Pokémon (optional, up to 5)
         while (!handPlayer1.isEmpty() && determineIfPokemonInHand(handPlayer1) && benchPlayer1.size() < 5) {
             System.out.println("Player 1, select a Pokémon to place on the bench (or -1 to skip):");
             pokemonIndices1.clear();
@@ -173,7 +186,7 @@ class PokemonGame {
             }
             int benchIndex1 = scanner.nextInt();
             scanner.nextLine();
-            if (benchIndex1 == -1) break;
+            if (benchIndex1 == -1) break; // Skip bench placement
             if (pokemonIndices1.contains(benchIndex1)) {
                 benchPlayer1.add((Pokemon) handPlayer1.remove(benchIndex1));
                 System.out.println("Player 1 placed " + benchPlayer1.get(benchPlayer1.size()-1).getName() + " on bench.");
@@ -203,7 +216,7 @@ class PokemonGame {
         activePlayer2 = (Pokemon) handPlayer2.remove(activeIndex2);
         System.out.println("Player 2 set " + activePlayer2.getName() + " as active.");
 
-        // Player 2 selects bench Pokémon (optional)
+        // Player 2 selects bench Pokémon (optional, up to 5)
         while (!handPlayer2.isEmpty() && determineIfPokemonInHand(handPlayer2) && benchPlayer2.size() < 5) {
             System.out.println("Player 2, select a Pokémon to place on the bench (or -1 to skip):");
             pokemonIndices2.clear();
@@ -215,7 +228,7 @@ class PokemonGame {
             }
             int benchIndex2 = scanner.nextInt();
             scanner.nextLine();
-            if (benchIndex2 == -1) break;
+            if (benchIndex2 == -1) break; // Skip bench placement
             if (pokemonIndices2.contains(benchIndex2)) {
                 benchPlayer2.add((Pokemon) handPlayer2.remove(benchIndex2));
                 System.out.println("Player 2 placed " + benchPlayer2.get(benchPlayer2.size()-1).getName() + " on bench.");
@@ -225,9 +238,10 @@ class PokemonGame {
             }
         }
 
-        printGameState(player1Turn);
+
     }
 
+    // Prints the current game state for both players
     private void printGameState(boolean isPlayer1) {
         System.out.println("\n=== Game State Update ===");
         System.out.println("Current Player: " + getCurrentPlayer());
@@ -251,19 +265,21 @@ class PokemonGame {
         System.out.println("====================\n");
     }
 
+    // Manages a single player’s turn, returning true if the game ends
     private boolean playerTurn(ArrayList<Card> deck, ArrayList<Card> hand, ArrayList<Card> prizes,
                                ArrayList<Card> returnDeck, ArrayList<Pokemon> bench, Pokemon active,
                                ArrayList<Card> opponentDeck, ArrayList<Card> opponentHand,
                                ArrayList<Card> opponentPrizes, Pokemon opponentActive) {
         System.out.println(getCurrentPlayer() + "'s turn:");
-        printGameState(player1Turn);
-        drawCard(deck, hand, 1);
+
+        drawCard(deck, hand, 1); // Draw 1 card at turn start
         System.out.println("Drew 1 card. Hand: " + hand);
 
-        boolean attacked = false;
-        trainerPlayedThisTurn = false;
-        boolean energyPlayedThisTurn = false;
+        boolean attacked = false; // Tracks if an attack has ended the turn
+        trainerPlayedThisTurn = false; // Reset trainer usage flag
+        boolean energyPlayedThisTurn = false; // Limits energy attachment to once per turn
 
+        // Main turn loop: continues until an attack or pass occurs
         while (!attacked) {
             System.out.println("Choose action (1: Play Energy, 2: Play Pokémon, 3: Play Trainer, 4: Attack, 5: Retreat, 6: Pass):");
             try {
@@ -271,7 +287,7 @@ class PokemonGame {
                 scanner.nextLine();
 
                 switch (action) {
-                    case 1:
+                    case 1: // Play Energy
                         if (!energyPlayedThisTurn && !hand.isEmpty()) {
                             System.out.println("Select Energy to attach:");
                             ArrayList<Integer> energyIndices = new ArrayList<>();
@@ -281,31 +297,24 @@ class PokemonGame {
                                     System.out.println(i + ": " + hand.get(i));
                                 }
                             }
-
                             if (energyIndices.isEmpty()) {
                                 System.out.println("No Energy cards in hand!");
                                 break;
                             }
-
                             int energyIndex = scanner.nextInt();
                             scanner.nextLine();
-
                             if (energyIndices.contains(energyIndex)) {
                                 Energy energy = (Energy) hand.get(energyIndex);
                                 String energyType = energy.getEnergyType();
                                 String pokemonType = active.getPokeType();
-
                                 boolean canAttach = false;
-                                if (energyType.equals("Basic")) {
-                                    canAttach = true;
-                                } else if (energyType.equals("Electric") && pokemonType.equals("Electric")) {
-                                    canAttach = true;
-                                } else if (energyType.equals("Water") && pokemonType.equals("Water")) {
-                                    canAttach = true;
-                                } else if (energyType.equals("Fire") && pokemonType.equals("Fire")) {
+                                // Check if energy type matches Pokémon type or is Basic
+                                if (energyType.equals("Basic") ||
+                                        (energyType.equals("Electric") && pokemonType.equals("Electric")) ||
+                                        (energyType.equals("Water") && pokemonType.equals("Water")) ||
+                                        (energyType.equals("Fire") && pokemonType.equals("Fire"))) {
                                     canAttach = true;
                                 }
-
                                 if (canAttach) {
                                     active.setEnergyAttached(active.getEnergyAttached() + 1);
                                     hand.remove(energyIndex);
@@ -323,7 +332,7 @@ class PokemonGame {
                         }
                         break;
 
-                    case 2:
+                    case 2: // Play Pokémon to bench
                         if (active == null) {
                             System.out.println("No active Pokémon - cannot place Pokémon on bench yet!");
                         } else if (bench.size() >= 5) {
@@ -350,7 +359,7 @@ class PokemonGame {
                         }
                         break;
 
-                    case 3:
+                    case 3: // Play Trainer
                         if (!trainerPlayedThisTurn && !hand.isEmpty()) {
                             System.out.println("Select Trainer to play:");
                             ArrayList<Integer> trainerIndices = new ArrayList<>();
@@ -360,15 +369,12 @@ class PokemonGame {
                                     System.out.println(i + ": " + hand.get(i));
                                 }
                             }
-
                             if (trainerIndices.isEmpty()) {
                                 System.out.println("No Trainer cards in hand!");
                                 break;
                             }
-
                             int trainerIndex = scanner.nextInt();
                             scanner.nextLine();
-
                             if (trainerIndices.contains(trainerIndex)) {
                                 Trainer trainer = (Trainer) hand.remove(trainerIndex);
                                 applyTrainerEffect(trainer, deck, hand, returnDeck);
@@ -381,65 +387,61 @@ class PokemonGame {
                         }
                         break;
 
-                    case 4:
+                    case 4: // Attack
                         if (active == null) {
                             System.out.println("No active Pokémon to attack with!");
                         } else if (active.getEnergyAttached() >= 1) {
-                            int baseDamage = 10; // Base damage for the attack
+                            int baseDamage = 10; // Base damage for all attacks
                             int finalDamage = baseDamage;
-
-                            // Check for Professor Elm's Advice effect
+                            // Apply Professor Elm's Advice if active
                             boolean professorElmEffectApplied = false;
                             if (player1Turn && ProfessorElmsAdviceActivePlayer1) {
                                 finalDamage = baseDamage * 2;
-                                ProfessorElmsAdviceActivePlayer1 = false; // Reset after use
+                                ProfessorElmsAdviceActivePlayer1 = false;
                                 professorElmEffectApplied = true;
                             } else if (!player1Turn && ProfessorElmsAdviceActivePlayer2) {
                                 finalDamage = baseDamage * 2;
-                                ProfessorElmsAdviceActivePlayer2 = false; // Reset after use
+                                ProfessorElmsAdviceActivePlayer2 = false;
                                 professorElmEffectApplied = true;
                             }
-
-                            // Check for weakness after Professor Elm's Advice (multiplicative effect)
+                            // Apply weakness multiplier
                             if (opponentActive.getWeakness().equals(active.getPokeType())) {
-                                finalDamage *= 2; // Double damage again if weak
+                                finalDamage *= 2;
                             }
-
                             opponentActive.setHp(opponentActive.getHp() - finalDamage);
                             System.out.println(active.getName() + " attacked " + opponentActive.getName() + " for " + finalDamage + " damage!" +
                                     (professorElmEffectApplied ? " (Professor Elm's Advice applied)" : "") +
                                     (opponentActive.getWeakness().equals(active.getPokeType()) ? " (Weakness applied)" : ""));
-
-                            // Discard energy after attack
+                            // Discard all attached energy after attack
                             int energyUsed = active.getEnergyAttached();
-                            active.setEnergyAttached(0); // Reset energy to 0
+                            active.setEnergyAttached(0);
                             if (player1Turn) {
                                 for (int i = 0; i < energyUsed; i++) {
-                                    discardPlayer1.add(new Energy("Generic")); // Add discarded energy to discard pile
+                                    discardPlayer1.add(new Energy("Generic"));
                                 }
                                 System.out.println(active.getName() + " used its energy to attack. " + energyUsed + " energy discarded.");
                             } else {
                                 for (int i = 0; i < energyUsed; i++) {
-                                    discardPlayer2.add(new Energy("Generic")); // Add discarded energy to discard pile
+                                    discardPlayer2.add(new Energy("Generic"));
                                 }
                                 System.out.println(active.getName() + " used its energy to attack. " + energyUsed + " energy discarded.");
                             }
-
+                            // Handle knockout if opponent’s HP drops to 0 or below
                             if (opponentActive.getHp() <= 0) {
                                 handleKnockout(hand, prizes, opponentActive);
                                 if (player1Turn) {
-                                    opponentActive = activePlayer2; // Player 2's new active Pokémon
+                                    opponentActive = activePlayer2;
                                 } else {
-                                    opponentActive = activePlayer1; // Player 1's new active Pokémon
+                                    opponentActive = activePlayer1;
                                 }
                             }
-                            attacked = true;
+                            attacked = true; // End turn after attack
                         } else {
                             System.out.println("Not enough energy to attack! Attach new energy to attack again.");
                         }
                         break;
 
-                    case 5:
+                    case 5: // Retreat
                         if (active == null) {
                             System.out.println("No active Pokémon to retreat!");
                         } else if (active.getEnergyAttached() >= active.getRetreatCost() && !bench.isEmpty()) {
@@ -465,23 +467,24 @@ class PokemonGame {
                         }
                         break;
 
-                    case 6:
-                        attacked = true;
+                    case 6: // Pass
+                        attacked = true; // Ends turn without action
                         System.out.println("Turn passed");
                         break;
 
                     default:
                         System.out.println("Invalid action");
                 }
-                printGameState(player1Turn);
+                printGameState(player1Turn); // Update display after each action
             } catch (Exception e) {
                 System.out.println("Invalid input");
-                scanner.nextLine();
+                scanner.nextLine(); // Clear invalid input
             }
         }
-        return checkGameEnd();
+        return checkGameEnd(); // Check if game has ended after turn
     }
 
+    // Handles a Pokémon knockout: moves it to discard, selects new active Pokémon, awards prize
     private void handleKnockout(ArrayList<Card> hand, ArrayList<Card> prizes, Pokemon knockedOut) {
         System.out.println(knockedOut.getName() + " was knocked out!");
         if (player1Turn) {
@@ -503,7 +506,7 @@ class PokemonGame {
                     System.out.println("Player 2's new active Pokémon: " + activePlayer2.getName());
                 }
             } else {
-                activePlayer2 = null;
+                activePlayer2 = null; // No Pokémon left
             }
         } else {
             discardPlayer1.add(knockedOut);
@@ -524,10 +527,10 @@ class PokemonGame {
                     System.out.println("Player 1's new active Pokémon: " + activePlayer1.getName());
                 }
             } else {
-                activePlayer1 = null;
+                activePlayer1 = null; // No Pokémon left
             }
         }
-
+        // Award prize card to attacking player
         if (!prizes.isEmpty()) {
             hand.add(prizes.remove(0));
             if (player1Turn) {
@@ -540,6 +543,7 @@ class PokemonGame {
         }
     }
 
+    // Checks win conditions: all prizes taken or no Pokémon left
     private boolean checkGameEnd() {
         if (prizeCountPlayer1 == 0) {
             System.out.println("Player 1 wins by taking all prize cards!");
@@ -560,6 +564,7 @@ class PokemonGame {
         return false;
     }
 
+    // Applies the effect of a Trainer card
     private void applyTrainerEffect(Trainer trainer, ArrayList<Card> deck, ArrayList<Card> hand, ArrayList<Card> returnDeck) {
         if (trainer.getName().equals("Bill")) {
             drawCard(deck, hand, 2);
@@ -567,15 +572,19 @@ class PokemonGame {
             System.out.println("Updated Hand: " + hand);
         } else if (trainer.getName().equals("Professor's Research")) {
             if (!hand.isEmpty()) {
-                returnDeck.addAll(hand);
-                Collections.shuffle(returnDeck);
-                hand.clear();
+                // Move hand to discard pile instead of deck
+                if (player1Turn) {
+                    discardPlayer1.addAll(hand);
+                    System.out.println("Discarded " + hand.size() + " cards to Player 1's discard pile.");
+                } else {
+                    discardPlayer2.addAll(hand);
+                    System.out.println("Discarded " + hand.size() + " cards to Player 2's discard pile.");
+                }
+                hand.clear(); // Clear the hand after discarding
             }
-            drawCard(deck, hand, 7);
-            System.out.println("Professor's Research effect: Returned hand to deck and drew 7 cards!");
+            drawCard(deck, hand, 7); // Draw 7 new cards from the deck
+            System.out.println("Professor's Research effect: Discarded hand and drew 7 cards!");
             System.out.println("Updated Hand: " + hand);
-
-
         } else if (trainer.getName().equals("Hero")) {
             ArrayList<Pokemon> availablePokemon = new ArrayList<>();
             if (player1Turn) {
@@ -585,21 +594,17 @@ class PokemonGame {
                 if (activePlayer2 != null) availablePokemon.add(activePlayer2);
                 availablePokemon.addAll(benchPlayer2);
             }
-    
             if (availablePokemon.isEmpty()) {
                 System.out.println("No Pokémon available to apply Hero effect!");
                 return;
             }
-    
             System.out.println("Select a Pokémon to increase HP by 100:");
             for (int i = 0; i < availablePokemon.size(); i++) {
-                System.out.println(i + ": " + availablePokemon.get(i).getName() + 
-                                 " (Current HP: " + availablePokemon.get(i).getHp() + ")");
+                System.out.println(i + ": " + availablePokemon.get(i).getName() +
+                        " (Current HP: " + availablePokemon.get(i).getHp() + ")");
             }
-    
             int selection = scanner.nextInt();
             scanner.nextLine();
-            
             if (selection >= 0 && selection < availablePokemon.size()) {
                 Pokemon selected = availablePokemon.get(selection);
                 selected.setHp(selected.getHp() + 100);
@@ -619,17 +624,18 @@ class PokemonGame {
         }
     }
 
+    // Runs the game loop until a win condition is met
     public void run() {
-        setupGame();
+        setupGame(); // Initialize game state
         while (!gameWon) {
             if (player1Turn) {
                 gameWon = playerTurn(deckPlayer1, handPlayer1, prizesPlayer1, deckPlayer1, benchPlayer1,
                         activePlayer1, deckPlayer2, handPlayer2, prizesPlayer2, activePlayer2);
-                player1Turn = false;
+                player1Turn = false; // Switch turns
             } else {
                 gameWon = playerTurn(deckPlayer2, handPlayer2, prizesPlayer2, deckPlayer2, benchPlayer2,
                         activePlayer2, deckPlayer1, handPlayer1, prizesPlayer1, activePlayer1);
-                player1Turn = true;
+                player1Turn = true; // Switch turns
             }
         }
         scanner.close();
