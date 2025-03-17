@@ -12,7 +12,7 @@ public class testStatsLibrary {
             System.out.println("Sample Standard Deviation: " + stats.getSampleStandardDeviation(testData));
             System.out.println("Population Standard Deviation: " + stats.getPopulationStandardDeviation(testData));
             System.out.println("C(5,2) = " + StatsLibrary.combination(5, 2));
-            System.out.println("P(5,2) = " + StatsLibrary.permutation(5, 2));  // Should print 20
+            System.out.println("P(5,2) = " + StatsLibrary.permutation(5, 2));  
             System.out.println("P(A and B) = " + StatsLibrary.multiplicativeLawIndependent(0.3, 0.4));
             System.out.println("P(A or B) = " + StatsLibrary.additiveLawMutuallyExclusive(0.3, 0.4));
             System.out.println("P(A or B)(P intersect B) = " + StatsLibrary.additiveLaw(0.3, 0.4, 0.1));
