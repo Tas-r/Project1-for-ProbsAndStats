@@ -9,8 +9,8 @@ public class testStatsLibrary {
             System.out.println("Mean: " + stats.getMean(testData));
             System.out.println("Median: " + stats.getMedian(testData));
             System.out.println("Mode: " + stats.getMode(testData));
-            System.out.println("Sample Std Dev: " + stats.getSampleStandardDeviation(testData));
-            System.out.println("Population Std Dev: " + stats.getPopulationStandardDeviation(testData));
+            System.out.println("Sample Standard Deviation: " + stats.getSampleStandardDeviation(testData));
+            System.out.println("Population Standard Deviation: " + stats.getPopulationStandardDeviation(testData));
             System.out.println("C(5,2) = " + StatsLibrary.combination(5, 2));
             System.out.println("P(5,2) = " + StatsLibrary.permutation(5, 2));  // Should print 20
             System.out.println("P(A and B) = " + StatsLibrary.multiplicativeLawIndependent(0.3, 0.4));
