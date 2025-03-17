@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MonteCarloBirthday/MonteCarloBirthday.iml" filepath="$PROJECT_DIR$/MonteCarloBirthday/MonteCarloBirthday.iml" />
       <module fileurl="file://$PROJECT_DIR$/MonteCarloDoor/MonteCarloDoor.iml" filepath="$PROJECT_DIR$/MonteCarloDoor/MonteCarloDoor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MonteCarloExtraCredit/MonteCarloExtraCredit.iml" filepath="$PROJECT_DIR$/MonteCarloExtraCredit/MonteCarloExtraCredit.iml" />
       <module fileurl="file://$PROJECT_DIR$/MonteCarloPokemon/MonteCarloPokemon.iml" filepath="$PROJECT_DIR$/MonteCarloPokemon/MonteCarloPokemon.iml" />
       <module fileurl="file://$PROJECT_DIR$/PokemonBattle/PokemonBattle.iml" filepath="$PROJECT_DIR$/PokemonBattle/PokemonBattle.iml" />
       <module fileurl="file://$PROJECT_DIR$/PokemonCardGame/PokemonCardGame.iml" filepath="$PROJECT_DIR$/PokemonCardGame/PokemonCardGame.iml" />

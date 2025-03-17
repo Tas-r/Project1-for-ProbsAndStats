@@ -19,7 +19,7 @@ class PokemonGame {
 
         // Add Pokemon cards
         for (int i = 0; i < pokemonCount; i++) {
-            deck.add(new Pokemon("Charmander", 50, "Scratch", 10, "Water"));
+            deck.add(new Pokemon("Charmander", 50, "Scratch",  "Water"));
         }
 
         // Add Energy cards

@@ -15,11 +15,11 @@ class PokemonGame {
     private int prizeCountPlayer1 = 6, prizeCountPlayer2 = 6; // Number of prizes remaining
     private Random random = new Random(); // Random number generator for coin flips and shuffling
     private boolean player1Turn = true; // Tracks whose turn it is (true = Player 1, false = Player 2)
-    private boolean gameWon = false; // Indicates if the game has ended
-    private Scanner scanner = new Scanner(System.in); // Input scanner for player choices
+    private boolean gameWon = false;
+    private Scanner scanner = new Scanner(System.in);
     private boolean trainerPlayedThisTurn = false; // Limits trainer card usage to once per turn
-    private boolean ProfessorElmsAdviceActivePlayer1 = false; // Tracks Professor Elm's Advice effect for Player 1
-    private boolean ProfessorElmsAdviceActivePlayer2 = false; // Tracks Professor Elm's Advice effect for Player 2
+    private boolean ProfessorElmsAdviceActivePlayer1 = false; // Tracks Professor Elm's Advice effect
+    private boolean ProfessorElmsAdviceActivePlayer2 = false;
 
     // Constructor: Initializes all ArrayLists and sets up the decks
     public PokemonGame() {
@@ -81,19 +81,32 @@ class PokemonGame {
         Collections.shuffle(deckPlayer2);
     }
 
-    // Returns the current player's identifier
+    // Returns the current player
     private String getCurrentPlayer() {
-        return player1Turn ? "Player 1" : "Player 2";
+        if (player1Turn) {
+            return "Player 1";
+        } else {
+            return "Player 2";
+        }
     }
 
-    // Returns the opponent player's identifier
+    // Returns the opponent player
     private String getOpponentPlayer() {
-        return player1Turn ? "Player 2" : "Player 1";
+        if (player1Turn) {
+            return "Player 2";
+        } else {
+            return "Player 1";
+        }
     }
 
     // Converts a coin flip result (0 or 1) to "Heads" or "Tails"
     private String getCoinFlipResult(int flip) {
-        return flip == 0 ? "Heads" : "Tails";
+        if (flip == 0) {
+            return "Heads";
+        } else {
+            return "Tails";
+        }
+
     }
 
     // Formats a Pokémon's status (name, HP, and energy) for display
@@ -125,10 +138,10 @@ class PokemonGame {
         // Keep reshuffling until a Pokémon is drawn, unless deck runs out
         while (!determineIfPokemonInHand(hand) && !deck.isEmpty()) {
             System.out.println("No Pokémon in hand. Reshuffling...");
-            returnDeck.addAll(hand); // Return hand to deck
-            Collections.shuffle(returnDeck); // Shuffle deck
+            returnDeck.addAll(hand);
+            Collections.shuffle(returnDeck);
             hand.clear(); // Clear hand
-            drawCard(deck, hand, 7); // Draw new hand
+            drawCard(deck, hand, 7);
             if (!determineIfPokemonInHand(hand)) {
                 drawCard(opponentDeck, opponentHand, 1); // Opponent draws penalty card
                 System.out.println("Opponent draws 1 card because no Pokémon in hand!");
@@ -309,10 +322,8 @@ class PokemonGame {
                                 String pokemonType = active.getPokeType();
                                 boolean canAttach = false;
                                 // Check if energy type matches Pokémon type or is Basic
-                                if (energyType.equals("Basic") ||
-                                        (energyType.equals("Electric") && pokemonType.equals("Electric")) ||
-                                        (energyType.equals("Water") && pokemonType.equals("Water")) ||
-                                        (energyType.equals("Fire") && pokemonType.equals("Fire"))) {
+                                if (energyType.equals("Basic") || (energyType.equals("Electric") && pokemonType.equals("Electric")) ||
+                                        (energyType.equals("Water") && pokemonType.equals("Water")) || (energyType.equals("Fire") && pokemonType.equals("Fire"))) {
                                     canAttach = true;
                                 }
                                 if (canAttach) {
@@ -410,7 +421,7 @@ class PokemonGame {
                             }
                             opponentActive.setHp(opponentActive.getHp() - finalDamage);
                             System.out.println(active.getName() + " attacked " + opponentActive.getName() + " for " + finalDamage + " damage!" +
-                                    (professorElmEffectApplied ? " (Professor Elm's Advice applied)" : "") +
+                                    (professorElmEffectApplied ? " (Professor Elm's Advice applied)" : "") +   //if applied show message, else empty.
                                     (opponentActive.getWeakness().equals(active.getPokeType()) ? " (Weakness applied)" : ""));
                             // Discard all attached energy after attack
                             int energyUsed = active.getEnergyAttached();

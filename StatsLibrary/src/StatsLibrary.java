@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Arrays;
 public class StatsLibrary {
 
@@ -75,7 +74,7 @@ public class StatsLibrary {
         return Math.sqrt(sum / theDataset.length);
     }
 
-
+    // does not use BigInteger like PC class as long is sufficient for this class
     public static long factorial(int n) {
         if (n < 0) return 0;
         long result = 1;
@@ -107,9 +106,6 @@ public class StatsLibrary {
         double result = probA + probB;
         return (result > 1) ? Double.NaN : result;
     }
-
-    // Conditional Probability: P(A|B) = P(A ∩ B) / P(B)
-
 
     // Bayes' Theorem: P(A|B) = P(B|A) * P(A) / P(B)
     public static double bayesTheorem(double probBgivenA, double probA, double probB) {
@@ -154,11 +150,6 @@ public class StatsLibrary {
     public static double negativeBinomial(int r, int x, double p) {
         return combination(x - 1, r - 1) * Math.pow(p, r) * Math.pow(1 - p, x - r);
     }
-
-    public static double hypergeometric(int N, int K, int n, int k) {
-        return (double) (combination(K, k) * combination(N - K, n - k)) / combination(N, n);
-    }
-
     // Negative Binomial Distribution (trials until r-th success)
     public double negativeBinomialExpectedValue(int r, double p) {
         return r / p;
@@ -168,6 +159,9 @@ public class StatsLibrary {
         return r * (1 - p) / (p * p);
     }
 
+    public static double hypergeometric(int N, int K, int n, int k) {
+        return (double) (combination(K, k) * combination(N - K, n - k)) / combination(N, n);
+    }
     // Hypergeometric Distribution (N=population, K=successes, n=sample)
     public double hypergeometricExpectedValue(int N, int K, int n) {
         return n * ((double) K / N);
@@ -176,6 +170,10 @@ public class StatsLibrary {
     public double hypergeometricVariance(int N, int K, int n) {
         return n * ((double) K / N) * ((double) (N - K) / N) * ((double) (N - n) / (N - 1));
     }
+
+
+
+
 }
 
 
